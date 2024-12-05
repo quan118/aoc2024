@@ -1,6 +1,6 @@
+use regex::Regex;
 use std::fs;
 use std::io;
-use regex::Regex;
 
 pub fn solve() {
   println!("Part 1: {}", part1("inputs/day3/part1").unwrap());
@@ -17,10 +17,11 @@ fn part1(file: &str) -> io::Result<u32> {
       let s: &str = m.as_str();
       // println!("Found match: {}", &s);
 
-      let tokens: Vec<&str> = s[4..s.len()-1].split(",").collect();
-      let product = tokens.iter()
+      let tokens: Vec<&str> = s[4..s.len() - 1].split(",").collect();
+      let product = tokens
+        .iter()
         .map(|x| x.parse::<u32>().unwrap())
-        .reduce(|acc, x| acc*x)
+        .reduce(|acc, x| acc * x)
         .unwrap();
       result += product;
     }
@@ -45,10 +46,11 @@ fn part2(file: &str) -> io::Result<u32> {
         is_enabled = true;
       } else {
         if is_enabled {
-          let tokens: Vec<&str> = s[4..s.len()-1].split(",").collect();
-          let product = tokens.iter()
+          let tokens: Vec<&str> = s[4..s.len() - 1].split(",").collect();
+          let product = tokens
+            .iter()
             .map(|x| x.parse::<u32>().unwrap())
-            .reduce(|acc, x| acc*x)
+            .reduce(|acc, x| acc * x)
             .unwrap();
           result += product;
         }
