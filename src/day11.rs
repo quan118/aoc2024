@@ -1,4 +1,4 @@
-use std::collections::VecDeque;
+use std::collections::HashMap;
 use std::fs;
 use std::io;
 
@@ -50,46 +50,32 @@ fn blink(numbers: Vec<u64>) -> Vec<u64> {
   new_numbers
 }
 
-fn count(number: u64, cur_level: u64, max_level: u64, memo: &Vec<usize>) -> usize {
-  let mut result: usize = 0;
-  if cur_level >= max_level {
+fn count(number: u64, level: u32, memo: &mut HashMap<(u64, u32), usize>) -> usize {
+  if level == 0 {
     return 1;
   }
-  if cur_level > max_level / 2 + 1 {
-    if 0 <= number && number <= 9 {
-      let idx = number * (max_level / 2 + 2) + (max_level - cur_level);
-      return memo[idx as usize];
-    } else {
-      let new_numbers = blink(vec![number]);
-      for new_number in new_numbers {
-        result += count(new_number, cur_level + 1, max_level, &memo);
-      }
-    }
-  } else {
-    let new_numbers = blink(vec![number]);
-    for new_number in new_numbers {
-      result += count(new_number, cur_level + 1, max_level, &memo);
-    }
+  let key = (number, level);
+
+  if let Some(&result) = memo.get(&key) {
+    return result;
   }
+
+  let mut result: usize = 0;
+  let new_numbers = blink(vec![number]);
+  for new_number in new_numbers {
+    result += count(new_number, level - 1, memo);
+  }
+  memo.insert(key, result);
 
   result
 }
 
-fn process(max_level: u64, numbers: &Vec<u64>) -> usize {
-  let mut memo: Vec<usize> = Vec::new();
-  for i in 0..10 {
-    let mut numbers1 = vec![i];
-    memo.push(1);
-    for j in 0..max_level / 2 + 1 {
-      numbers1 = blink(numbers1);
-      memo.push(numbers1.len());
-    }
-  }
-  println!("built memo");
-
+fn process(max_level: u32, numbers: &Vec<u64>) -> usize {
+  let mut memo: HashMap<(u64, u32), usize> = HashMap::new();
   let mut result: usize = 0;
+
   for number in numbers {
-    result += count(*number, 0, max_level, &memo);
+    result += count(*number, max_level, &mut memo);
   }
 
   result
